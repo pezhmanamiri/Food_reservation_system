@@ -1,0 +1,140 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سیستم رزرو غذای شرکت | انتخاب غذا</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="crystal-bg">
+    <div class="glass-container">
+        <!-- هدر سیستم -->
+        <header class="glass-header">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <h1><i class="fas fa-utensils"></i> سیستم رزرو غذای شرکت</h1>
+                        <p class="mb-0">کارمند گرامی، لطفا وعده‌های غذایی هفته را انتخاب نمایید</p>
+                    </div>
+                    <div class="col-md-6 text-start">
+                        <div class="user-info">
+                            <span class="badge bg-primary"><i class="fas fa-id-card"></i> کد پرسنلی: {{ request.user.employee_code }}</span>
+                            <span class="badge bg-secondary ms-2"><i class="fas fa-user"></i> {{ request.user.get_full_name }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- بخش اصلی -->
+        <main class="container mt-4">
+            <!-- تب روزهای هفته -->
+            <div class="days-tabs glass-card mb-4">
+                <div class="row g-0 text-center">
+                    {% for day in days %}
+                    <div class="col day-tab {% if forloop.first %}active{% endif %}" data-day="{{ day.id }}">
+                        <h5>{{ day.name }}</h5>
+                        <small>{{ day.date|date:"Y/m/d" }}</small>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- کارت اطلاعات کاربر -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="glass-card h-100">
+                        <div class="card-body">
+                            <h5><i class="fas fa-info-circle"></i> اطلاعات کاربر</h5>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-id-badge"></i> واحد: {{ request.user.department }}</li>
+                                <li><i class="fas fa-calendar-alt"></i> تاریخ امروز: {% now "Y/m/d" %}</li>
+                                <li><i class="fas fa-clock"></i> آخرین رزرو: {{ last_reservation|default:"-" }}</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="glass-card h-100">
+                        <div class="card-body text-center">
+                            <h5><i class="fas fa-clipboard-list"></i> آمار رزروها</h5>
+                            <div class="stats">
+                                <div class="stat-item">
+                                    <span class="number">{{ reserved_meals }}</span>
+                                    <span class="label">وعده رزرو شده</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="number">{{ remaining_days }}</span>
+                                    <span class="label">روز باقیمانده</span>
+                                </div>
+                            </div>
+                            <a href="{% url 'reservation_history' %}" class="btn btn-outline-light mt-2">
+                                <i class="fas fa-history"></i> مشاهده تاریخچه
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- بخش انتخاب غذاها -->
+            <div id="meals-container">
+                {% for meal_type in meal_types %}
+                <div class="meal-section glass-card mb-4">
+                    <h3 class="section-title">
+                        <i class="fas fa-{{ meal_type.icon }}"></i> {{ meal_type.name }}
+                    </h3>
+                    <div class="row food-items" data-meal-type="{{ meal_type.id }}">
+                        <!-- غذاها از طریق AJAX بارگذاری می‌شوند -->
+                        <div class="col-12 text-center py-4 loading-text">
+                            <i class="fas fa-spinner fa-spin"></i> در حال دریافت لیست غذاها...
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- دکمه‌های اقدام -->
+            <div class="action-buttons text-center mb-5">
+                <button id="submit-reservations" class="btn btn-primary btn-lg glass-btn">
+                    <i class="fas fa-check-circle"></i> ثبت نهایی انتخاب‌ها
+                </button>
+                <button class="btn btn-outline-light btn-lg glass-btn ms-3">
+                    <i class="fas fa-times"></i> انصراف
+                </button>
+            </div>
+        </main>
+
+        <!-- فوتر -->
+        <footer class="glass-footer text-center mt-4">
+            <p class="mb-0">سیستم رزرو غذای شرکت - نسخه 1.0</p>
+            <small>© {% now "Y" %} کلیه حقوق محفوظ است</small>
+        </footer>
+    </div>
+
+    <!-- مدال تایید -->
+    <div class="modal fade" id="confirmationModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content glass-card">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-check-circle"></i> تایید رزرو غذا</h5>
+                </div>
+                <div class="modal-body">
+                    <p>آیا از انتخاب‌های خود مطمئن هستید؟</p>
+                    <div id="selected-meals-summary"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary glass-btn" data-bs-dismiss="modal">بازگشت</button>
+                    <button type="button" class="btn btn-primary glass-btn" id="confirm-reservation">تایید و ثبت</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="{% static 'js/food_selection.js' %}"></script>
+</body>
+</html>

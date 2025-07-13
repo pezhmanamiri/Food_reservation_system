@@ -1,0 +1,217 @@
+/* تم کریستالی و شیشه‌ای */
+:root {
+    --primary-color: #4e54c8;
+    --secondary-color: #8f94fb;
+    --glass-color: rgba(255, 255, 255, 0.15);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.2);
+    --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+    --glass-blur: blur(10px);
+}
+
+body {
+    font-family: 'Vazir', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    background-attachment: fixed;
+    min-height: 100vh;
+    padding-bottom: 50px;
+}
+
+/* پس‌زمینه کریستالی */
+.crystal-bg::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('{% static "images/crystal-pattern.png" %}') center/cover;
+    opacity: 0.1;
+    z-index: -1;
+}
+
+/* المان‌های شیشه‌ای */
+.glass-container {
+    max-width: 1200px;
+    margin: 30px auto;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.glass-header {
+    background: var(--glass-color);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border-bottom: var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    padding: 20px 0;
+    color: white;
+}
+
+.glass-card {
+    background: var(--glass-color);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    border-radius: 10px;
+    padding: 20px;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.glass-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.glass-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+/* تب روزهای هفته */
+.days-tabs {
+    overflow: hidden;
+}
+
+.day-tab {
+    padding: 15px 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.day-tab:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 3px;
+    background: white;
+    transition: all 0.3s ease;
+}
+
+.day-tab.active {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.day-tab.active:after {
+    width: 50%;
+}
+
+.day-tab:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* کارت غذا */
+.food-item {
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+}
+
+.food-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.food-item.selected {
+    background: rgba(76, 175, 80, 0.3);
+    border: 2px solid rgba(76, 175, 80, 0.7);
+}
+
+.food-img {
+    height: 150px;
+    object-fit: cover;
+    width: 100%;
+}
+
+.food-details {
+    padding: 15px;
+}
+
+.food-title {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.food-desc {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.food-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+}
+
+/* بخش وعده‌های غذایی */
+.meal-section {
+    margin-bottom: 30px;
+}
+
+.section-title {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
+
+.loading-text {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* آمار کاربر */
+.stats {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 15px 0;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.number {
+    display: block;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.label {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+/* فوتر */
+.glass-footer {
+    margin-top: 40px;
+    padding: 20px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+}
+
+/* رسپانسیو */
+@media (max-width: 768px) {
+    .days-tabs .col {
+        flex: 0 0 33.333%;
+        max-width: 33.333%;
+    }
+
+    .food-item {
+        margin-bottom: 15px;
+    }
+}
